@@ -4,22 +4,8 @@ import queue
 from datetime import datetime, timedelta
 
 # Define the time format for the input
-timestamp_format = "%Y-%m-%d %H:%M:%S.%f"
-print_format = "%Y-%m-%d %H:%M:%S"
-
-# Add argument parsing
-parser = argparse.ArgumentParser(description="Parse data stream")
-
-parser.add_argument(
-    "--input_file", type=argparse.FileType("r"), required=True, help="File to parse"
-)
-
-parser.add_argument("--window_size", type=int, default=10, help="Number of minutes")
-
-args = parser.parse_args()
-
-# Convert every line from the input file to a list
-data_list = [json.loads(line) for line in args.input_file]
+TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+PRINT_FORMAT = "%Y-%m-%d %H:%M"
 
 
 # Calculate the average duration for a queue
@@ -38,7 +24,7 @@ def calculate_window_average_duration(window):
     return total_duration / valid_count
 
 
-def write_average_by_minute(data, current_date, queue):
+def write_average_by_minute(data, current_date, queue, file):
     # If there is no more data, return
     if len(data) == 0:
         return
@@ -47,19 +33,18 @@ def write_average_by_minute(data, current_date, queue):
     if queue.full():
         queue.get()
 
-    current_date = datetime.strptime(current_date, timestamp_format)
-    latest_data = datetime.strptime(data[0]["timestamp"], timestamp_format)
+    latest_data = datetime.strptime(data[0]["timestamp"], TIMESTAMP_FORMAT)
 
     # If the current date is the same as the latest data, add it to the queue
     if (
-        current_date.date() == latest_data.date()
+        current_date.minute == latest_data.minute
         and current_date.hour == latest_data.hour
-        and current_date.minute == latest_data.minute
+        and current_date.date() == latest_data.date()
     ):
         queue.put(data.pop(0))
     else:
         queue.put(
-            {"timestamp": current_date.strftime(timestamp_format), "duration": -1}
+            {"timestamp": current_date.strftime(TIMESTAMP_FORMAT), "duration": -1}
         )
 
     # Add one minute to the current date
@@ -68,32 +53,63 @@ def write_average_by_minute(data, current_date, queue):
     # Write the average delivery time to the output file
     line = json.dumps(
         {
-            "date": current_date.strftime(print_format),
+            "date": current_date.strftime(PRINT_FORMAT),
             "average_delivery_time": calculate_window_average_duration(
                 list(queue.queue)
             ),
         }
     )
 
-    with open("output", "a") as file:
-        file.write(line + "\n")
+    file.write(line + "\n")
 
-    current_date = current_date.strftime(timestamp_format)
-    write_average_by_minute(data, current_date, queue)
+    write_average_by_minute(data, current_date, queue, file)
 
 
-# Create a queue to store the last n minutes
-sliding_window = queue.Queue(maxsize=args.window_size)
+if __name__ == "__main__":
+    # Argument parsing
+    parser = argparse.ArgumentParser(description="Parse data stream")
 
-# Get the starting date
-starting_date = datetime.strptime(
-    data_list[0]["timestamp"], timestamp_format
-) - timedelta(minutes=1)
+    parser.add_argument(
+        "--input_file", type=argparse.FileType("r"), required=True, help="File to parse"
+    )
 
-# Create a empty file to write the output
-open("output", "w").close()
+    parser.add_argument("--window_size", type=int, default=10, help="Number of minutes")
 
-# Start the recursive function
-write_average_by_minute(
-    data_list, starting_date.strftime(timestamp_format), sliding_window
-)
+    args = parser.parse_args()
+
+    # Convert every line from the input file to a list
+    data_list = [json.loads(line) for line in args.input_file]
+
+    # Create a queue to store the last n minutes
+    sliding_window = queue.Queue(maxsize=args.window_size)
+
+    # We need to start the date one minute before the first data
+    starting_date = datetime.strptime(
+        data_list[0]["timestamp"], TIMESTAMP_FORMAT
+    ) - timedelta(minutes=1)
+
+    # Create a empty file to write the output or clear the file if it already exists
+    open("output.json", "w").close()
+
+    # Start the recursive function
+    write_average_by_minute(
+        data_list.copy(), starting_date, sliding_window, open("output.json", "a")
+    )
+
+    # Measure the time it takes to run the function
+
+    # import timeit
+
+    # open("output_perf.json", "w").close()
+
+    # result = timeit.timeit(
+    #     lambda: write_average_by_minute(
+    #         data_list.copy(),
+    #         starting_date,
+    #         queue.Queue(maxsize=args.window_size),
+    #         open("output_perf.json", "a"),
+    #     ),
+    #     number=1000,
+    # )
+
+    # print("Time to run 1000 times: ", result)
