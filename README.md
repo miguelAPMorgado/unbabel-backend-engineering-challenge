@@ -9,10 +9,10 @@ python main.py --input_file events.json --window_size 10
 ## Implementation
 
 - Code implementation was done using Python 3.11.7
-- Code was formatted using the black python formatter
+- The code was formatted using the black python formatter
 - No external packages used
 
-## Thought proccess
+## Thought process
 
 To solve this problem we need to calculate the average delivery time inside a sliding window of size n.
 
@@ -27,10 +27,10 @@ So using the input provided and a window size of 3 we have:
 Average in sliding window: 0
 ```
 
-on the first itteration we move the slidding window forward so we end up with:
+on the first iteration we move the sliding window forward so we end up with:
 
 ```
-1st itterration
+1st iteration
 
       [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
 [  ,  ,20]                                       <-- Sliding window of size 3
@@ -41,7 +41,7 @@ Average in sliding window: 20
 and add 20 to the sliding window, and figure out the average inside the window.
 
 ```
-2nd itterration
+2nd iteration
 
    [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
 [  ,20, -1]                                   <-- Sliding window of size 3
@@ -50,7 +50,7 @@ Average in sliding window: 20
 ```
 
 ```
-3rd itterration
+3rd iteration
 
 [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
 [20, -1, -1]                               <-- Sliding window of size 3
@@ -59,7 +59,7 @@ Average in sliding window: 20
 ```
 
 ```
-4th itterration
+4th iteration
 
 [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
     [-1, -1, -1]                           <-- Sliding window of size 3
@@ -71,15 +71,15 @@ and so on until we reach the last timestamp.
 
 ## Assumptions
 
-- Input file will always be valid
+- The input file will always be valid
 
 ## Performance
 
-Inside the code there is a comment with a simple performance test using the timeit python module.
+Inside the code, there is a comment with a simple performance test using the timeit python module.
 
 Using my machine I get 1000 executions in 0.5867935860005673 seconds.
 
-Unfortunatly I don't have anything else to compare it against except my first commit without some optimizations wich had a execution time of 1.1433425469986108.
+Unfortunately I don't have anything else to compare it against except my first commit without some optimizations which had an execution time of 1.1433425469986108.
 
 
 # Original Challenge
