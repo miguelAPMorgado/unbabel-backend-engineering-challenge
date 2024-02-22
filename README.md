@@ -8,15 +8,17 @@ python main.py --input_file events.json --window_size 10
 
 ## Implementation
 
-- Code implementation was done using Python 3.11.7
-- The code was formatted using the black python formatter
-- No external packages used
+- Code implementation was done using Python 3.11.7;
+- The code was formatted using the black python formatter;
+- No external packages used.
 
 ## Thought process
 
 To solve this problem we need to calculate the average delivery time inside a sliding window of size n.
 
 Before we can do that we need a list with all the minutes between the first and last timestamp, any minute that is not in our original file has a duration of -1.
+
+To calculate the average delivery time we calculate the average value inside the sliding windows, ignoring the invalid durations (-1).
 
 So using the input provided and a window size of 3 we have:
 
@@ -71,7 +73,7 @@ and so on until we reach the last timestamp.
 
 ## Assumptions
 
-- The input file will always be valid
+- The input file will always be valid.
 
 ## Performance
 
@@ -79,7 +81,7 @@ Inside the code, there is a comment with a simple performance test using the tim
 
 Using my machine I get 1000 executions in 0.5867935860005673 seconds.
 
-Unfortunately I don't have anything else to compare it against except my first commit without some optimizations which had an execution time of 1.1433425469986108.
+Unfortunately, I don't have anything else to compare it against, except my first commit without some optimizations which had an execution time of 1.1433425469986108.
 
 
 # Original Challenge
