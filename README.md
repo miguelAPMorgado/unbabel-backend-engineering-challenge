@@ -21,7 +21,7 @@ Before we can do that we need a list with all the minutes between the first and 
 So using the input provided and a window size of 3 we have:
 
 ```
-	  [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+      [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
 [ , , ]                                          <-- Sliding window of size 3
 
 Average in sliding window: 0
@@ -32,13 +32,13 @@ on the first itteration we move the slidding window forward so we end up with:
 ```
 1st itterration
 
-	  [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+      [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
 [  ,  ,20]                                       <-- Sliding window of size 3
 
 Average in sliding window: 20
 ```
 
-and add 20 to the sliding window, and figure out the average inside the window
+and add 20 to the sliding window, and figure out the average inside the window.
 
 ```
 2nd itterration
