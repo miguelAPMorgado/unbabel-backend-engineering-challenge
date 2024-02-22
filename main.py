@@ -96,7 +96,7 @@ if __name__ == "__main__":
         data_list.copy(), starting_date, sliding_window, open("output.json", "a")
     )
 
-    # Measure the time it takes to run the function
+    # Measure the time it takes to run the function 1000 times
 
     # import timeit
 

@@ -1,5 +1,88 @@
 # Backend Engineering Challenge
 
+## How to run
+
+```bash
+python main.py --input_file events.json --window_size 10
+```
+
+## Implementation
+
+- Code implementation was done using Python 3.11.7
+- Code was formatted using the black python formatter
+- No external packages used
+
+## Thought proccess
+
+To solve this problem we need to calculate the average delivery time inside a sliding window of size n.
+
+Before we can do that we need a list with all the minutes between the first and last timestamp, any minute that is not in our original file has a duration of -1.
+
+So using the input provided and a window size of 3 we have:
+
+```
+	  [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+[ , , ]                                          <-- Sliding window of size 3
+
+Average in sliding window: 0
+```
+
+on the first itteration we move the slidding window forward so we end up with:
+
+```
+1st itterration
+
+	  [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+[  ,  ,20]                                       <-- Sliding window of size 3
+
+Average in sliding window: 20
+```
+
+and add 20 to the sliding window, and figure out the average inside the window
+
+```
+2nd itterration
+
+   [20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+[  ,20, -1]                                   <-- Sliding window of size 3
+
+Average in sliding window: 20
+```
+
+```
+3rd itterration
+
+[20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+[20, -1, -1]                               <-- Sliding window of size 3
+
+Average in sliding window: 20
+```
+
+```
+4th itterration
+
+[20, -1, -1, -1, 31, -1, -1, -1, ... , 54] <-- Sample data duration
+    [-1, -1, -1]                           <-- Sliding window of size 3
+
+Average in sliding window: 0
+```
+
+and so on until we reach the last timestamp.
+
+## Assumptions
+
+- Input file will always be valid
+
+## Performance
+
+Inside the code there is a comment with a simple performance test using the timeit python module.
+
+Using my machine I get 1000 executions in 0.5867935860005673 seconds.
+
+Unfortunatly I don't have anything else to compare it against except my first commit without some optimizations wich had a execution time of 1.1433425469986108.
+
+
+# Original Challenge
 
 Welcome to our Engineering Challenge repository 🖖
 
